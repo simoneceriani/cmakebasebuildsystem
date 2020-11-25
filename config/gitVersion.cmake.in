@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.17)
+include_guard(GLOBAL)
+
+# generated with CMakeBaseBuildSystem
+
+set(@GIT_HASH_NAME@ "@GIT_HASH_VALUE@")
+set(@GIT_LOG_NAME@ @GIT_LOG_VALUE@)

@@ -1,0 +1,47 @@
+@echo off
+set BASEPATH=%~dp0
+
+set ALL_DLL_PATHS=@ALL_DLL_PATHS@
+set RELEASE_DLL_PATHS=@RELEASE_DLL_PATHS@
+set DEBUG_DLL_PATHS=@DEBUG_DLL_PATHS@
+
+set QT_PLUGIN_PATH=@QT_PLUGIN_PATH@
+
+set VS_IDE_PATH="@VS_IDE_PATH@"
+
+REM second argument analysis
+if "%2"=="All" goto SET_PATH_ALL
+if "%2"=="Release" goto SET_PATH_RELEASE
+if "%2"=="Debug" goto SET_PATH_DEBUG
+GOTO SET_PATH_ALL
+
+:SET_PATH_ALL
+	set PATH=%ALL_DLL_PATHS%;%PATH%;
+GOTO SECOND_STEP
+
+:SET_PATH_RELEASE
+	set PATH=%RELEASE_DLL_PATHS%;%PATH%;
+GOTO SECOND_STEP
+
+:SET_PATH_DEBUG
+	set PATH=%DEBUG_DLL_PATHS%;%PATH%;
+GOTO SECOND_STEP
+
+REM -------------------------------------------
+
+:SECOND_STEP
+REM first argument analysis
+if "%1"=="CMD" goto OPEN_CMD
+if "%1"=="PATH" goto EXIT_BAT
+if "%1"=="VS" goto OPEN_VS
+GOTO OPEN_VS
+
+:OPEN_CMD
+	start cmd
+goto EXIT_BAT
+
+:OPEN_VS
+	start "" %VS_IDE_PATH% "@CMAKE_PROJECT_NAME@.sln"
+goto EXIT_BAT
+
+:EXIT_BAT

@@ -1,0 +1,51 @@
+cmake_minimum_required(VERSION 3.17)
+project(<<LIBRARY_NAME>> LANGUAGES CXX)
+
+#------------------------------------------------------------------------------------------
+# Declare dependencies, use as find_package
+# find_package_wrapper(...)
+
+#------------------------------------------------------------------------------------------
+# prepare headers and sources
+
+# define INTERFACE LIBRARY
+add_library(<<TARGET_NAME>> INTERFACE)
+
+# use the target_sources_wrapper, which wrap cmake native target_sources. 
+# Wrapping is necessary to cover both build and installation step.
+# This is an interface library, so only INTERACE sources can be used.
+# If the option NO_AUTO_SOURCE_GROUP is omitted the target sources and headers are 
+# automatically grouped respectively in "Sources" and "Headers" folder in the IDE
+# environment whereas the dependency headers (i.e. those from linked targets) are grouped
+# in the "Dependency Headers" folder.
+# Specify NO_AUTO_SOURCE_GROUP if you want all sources and headers grouped in the IDE
+# standard folders ("Source Files" and "Header Files" in Visual Studio).
+# note: you can repeat target_sources_wrapper if you want to organize your files
+target_sources_wrapper(<<TARGET_NAME>>
+	INTERFACE
+		<<...>>
+	NO_AUTO_SOURCE_GROUP
+)
+
+# TODO: try to convince VisualStudio to show files... so far not working :-(
+# add_custom_target(<<TARGET_NAME>> SOURCES <<...>>)
+
+#Add an alias so that library can be used inside the build tree
+add_library(<<MAIN_PROJECT_NAME>>::<<TARGET_NAME>> ALIAS <<TARGET_NAME>>)
+
+# "link libraries", i.e., carry on dependencies, only INTERFACE admitted
+target_link_libraries(<<TARGET_NAME>>
+	INTERFACE
+		<<...>>
+)
+
+#------------------------------------------------------------------------------------------
+# GLOBAL|SELF|customExportName allowed
+installAllTargets(<<INSTALL_COMPONENT>>)
+
+#------------------------------------------------------------------------------------------
+# this will add the samples and tests folder (if existing) and will perfom common operations:
+# - link the target to the <<MAIN_PROJECT_NAME>>Version library, which allow to have the root include directory added
+# - create folder structure for MSVC IDE
+# - analyze Dll dependencies per target and globally, which in turn will be used for deep installation and PATH generation
+commonEndProjectCMake(<<MAIN_PROJECT_NAME>>)

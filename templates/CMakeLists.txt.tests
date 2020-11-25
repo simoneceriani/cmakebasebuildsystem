@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.17)
+PROJECT(<<TESTS_MAIN_NAME>>  LANGUAGES CXX)
+
+# if you want boost test, use these lines
+# find boost test
+#set( Boost_USE_STATIC_LIBS TRUE )
+#set( Boost_USE_MULTITHREADED TRUE )
+##set( Boost_USE_STATIC_RUNTIME FALSE )
+# find_package( Boost REQUIRED COMPONENTS unit_test_framework)
+
+# note: tests are not installed by default, 
+# we do not use target_sources_wrapper here 
+# but the native target_sources function
+
+# add these lines block for each test, or if you need more complex structure, create a subfolder
+#add_executable(<<TARGET_NAME>>)
+#target_sources(<<TARGET_NAME>> PRIVATE <<...>>)
+#if (WIN32)
+#	set_target_properties(<<TARGET_NAME>> PROPERTIES FOLDER <<TEST_FOLDER>>)
+#endif()
+#target_link_libraries(<<TARGET_NAME>> PRIVATE <<...>> Boost::unit_test_framework)
+#add_test(NAME <<TARGET_NAME>> COMMAND <<TARGET_NAME>>)
+
+# and/or compile this list to have simple 1-file test
+
+#set(TESTS_LIST 
+#	<<...>>
+#)
+#
+#foreach(s ${TESTS_LIST})
+#	get_filename_component(sn "${s}" NAME_WE)
+#	add_executable(<<TESTS_MAIN_NAME>>_${sn})
+#	target_sources(<<TESTS_MAIN_NAME>>_${sn} PRIVATE ${s})
+#	if (WIN32)
+#		set_target_properties(<<TESTS_MAIN_NAME>>_${sn} PROPERTIES FOLDER <<TEST_FOLDER>>)
+#	endif()	
+#	target_link_libraries(<<TESTS_MAIN_NAME>>_${sn} PRIVATE <<...>> Boost::unit_test_framework)
+#	add_test(NAME <<TESTS_MAIN_NAME>>_${sn} COMMAND <<TESTS_MAIN_NAME>>_${sn})
+#endforeach()

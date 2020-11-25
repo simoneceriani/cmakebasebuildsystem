@@ -1,0 +1,70 @@
+cmake_minimum_required(VERSION 3.17)
+project(<<LIBRARY_NAME>> LANGUAGES CXX)
+
+#------------------------------------------------------------------------------------------
+# Declare dependencies, use as find_package
+# find_package_wrapper(...)
+
+#------------------------------------------------------------------------------------------
+# prepare headers and sources
+
+# define the library
+add_library(<<TARGET_NAME>> <<STATIC|SHARED>>)
+
+# use the target_sources_wrapper, which wrap cmake native target_sources. 
+# Wrapping is necessary to cover both build and installation step
+# Normally headers are PUBLIC and cpp are PRIVATE, but you might have private headers too
+# If the option NO_AUTO_SOURCE_GROUP is omitted the target sources and headers are 
+# automatically grouped respectively in "Sources" and "Headers" folder in the IDE
+# environment whereas the dependency headers (i.e. those from linked targets) are grouped
+# in the "Dependency Headers" folder.
+# Specify NO_AUTO_SOURCE_GROUP if you want all sources and headers grouped in the IDE
+# standard folders ("Source Files" and "Header Files" in Visual Studio).
+# note: you can repeat target_sources_wrapper if you want to organize your files
+target_sources_wrapper(<<TARGET_NAME>> 
+	PUBLIC 
+		<<...>> 
+	PRIVATE 
+		<<...>>
+	NO_AUTO_SOURCE_GROUP
+)
+
+# if you do not want to have <<TARGET_NAME>>d.{dll,lib,so} in debug disable this 
+set_target_properties(<<TARGET_NAME>>  PROPERTIES DEBUG_POSTFIX "d")
+
+# special compiler flags for this target
+# PUBLIC will propagate do dependent, PRIVATE if they are only for this project
+#if(MSVC)
+#	target_compile_options(<<TARGET_NAME>> <<PUBLIC|PRIVATE>> /bigobj)
+#endif()
+#target_compile_features(<<TARGET_NAME>> PUBLIC cxx_std_11) # cxx_std_14
+
+#Add an alias so that library can be used inside the build tree
+add_library(<<MAIN_PROJECT_NAME>>::<<TARGET_NAME>> ALIAS <<TARGET_NAME>>)
+
+# link libraries
+target_link_libraries(<<TARGET_NAME>>
+	PUBLIC
+		<<...>>
+	PRIVATE
+		<<...>>
+	INTERFACE
+		<<...>>
+)
+
+# add qt automoc per target if you need (or remove this section if qt independent)
+# AUTOMOC for signal slot, AUTOUIC for User Interfaces, AUTORCC for resource files
+# set_target_properties(<<TARGET_NAME>> PROPERTIES AUTOMOC ON)
+# set_target_properties(<<TARGET_NAME>> PROPERTIES AUTOUIC ON)
+# set_target_properties(<<TARGET_NAME>> PROPERTIES AUTORCC ON)
+
+#------------------------------------------------------------------------------------------
+# GLOBAL, SELF or a custom export name allowed
+installAllTargets(<<INSTALL_COMPONENT>>)
+
+#------------------------------------------------------------------------------------------
+# this will add the samples and tests folder (if existing) and will perfom common operations:
+# - link the target to the <<MAIN_PROJECT_NAME>>Version library, which allow to have the root include directory added
+# - create folder structure for MSVC IDE
+# - analyze Dll dependencies per target and globally, which in turn will be used for deep installation and PATH generation
+commonEndProjectCMake(<<MAIN_PROJECT_NAME>>)

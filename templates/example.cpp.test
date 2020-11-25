@@ -1,0 +1,11 @@
+#define BOOST_TEST_MODULE <<TESTS_MAIN_NAME>> <<TARGET_NAME>>
+#include <boost/test/unit_test.hpp>
+
+BOOST_AUTO_TEST_SUITE(<<TARGET_NAME>>);
+
+// add as many function for testing as you need
+BOOST_AUTO_TEST_CASE(<<TEST_NAME>>) {
+  BOOST_TEST(true);
+}
+
+BOOST_AUTO_TEST_SUITE_END();

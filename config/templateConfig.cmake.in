@@ -1,0 +1,53 @@
+get_filename_component(@ROOT_NAME@_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include(CMakeFindDependencyMacro)
+
+# list of all available components
+SET(@ROOT_NAME@_COMPONENTS_LIST "@EXPORTED_TARGETS_LIST@")
+
+SET(@ROOT_NAME@_DEFAULT_COMPONENTS_LIST "@DEFAULT_COMPONENTS_LIST@")
+
+# check the required components, if empty set to default component list
+STRING(COMPARE EQUAL "${@ROOT_NAME@_FIND_COMPONENTS}" "" no_find_components)
+if(no_find_components)
+ SET(@ROOT_NAME@_FIND_COMPONENTS ${@ROOT_NAME@_DEFAULT_COMPONENTS_LIST})
+endif()
+
+list(APPEND CMAKE_MODULE_PATH ${@ROOT_NAME@_CMAKE_DIR}/..)
+if(UNIX)
+	list(APPEND CMAKE_MODULE_PATH ${@ROOT_NAME@_CMAKE_DIR}/../unix)
+endif()
+if(WIN32)
+	list(APPEND CMAKE_MODULE_PATH ${@ROOT_NAME@_CMAKE_DIR}/../win32)
+endif()
+
+# cross dependencies management
+@CODE_FOR_DEPENDENCIES@
+# end cross dependencies management
+
+set(@ROOT_NAME@_LIBRARIES "")
+foreach(COMPONENT ${@ROOT_NAME@_FIND_COMPONENTS})
+	
+	if(NOT ${COMPONENT} IN_LIST @ROOT_NAME@_COMPONENTS_LIST)
+		message(FATAL_ERROR "Required components ${COMPONENT} is not present in component list, available components are ${@ROOT_NAME@_COMPONENTS_LIST}")
+	endif()
+		
+	if(NOT TARGET @ROOT_NAME@::${COMPONENT})
+		include("${@ROOT_NAME@_CMAKE_DIR}/targets/${COMPONENT}Targets.cmake")
+	endif()
+	
+	LIST(APPEND @ROOT_NAME@_LIBRARIES @ROOT_NAME@::${COMPONENT})
+endforeach()
+
+# manual cross dependencies management
+@POST_CODE_FOR_DEPENDENCIES@
+# manual end cross dependencies management
+
+
+list(REMOVE_AT CMAKE_MODULE_PATH -1)
+if(UNIX)
+	list(REMOVE_AT CMAKE_MODULE_PATH -1)
+endif()
+if(WIN32)
+	list(REMOVE_AT CMAKE_MODULE_PATH -1)
+endif()
+

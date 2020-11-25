@@ -1,0 +1,11 @@
+#include "@ROOT_NAME@Version.h"
+
+// generated with CMakeBaseBuildSystem
+
+namespace @ROOT_NAME@ {
+	
+	const char * version() {
+		return @ROOT_NAME@_VERSION;
+	}
+
+}

@@ -1,0 +1,15 @@
+#pragma once
+
+// generated wit CMakeBaseBuildSystem
+
+#define @ROOT_NAME@_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define @ROOT_NAME@_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define @ROOT_NAME@_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define @ROOT_NAME@_VERSION_TWEAK @PROJECT_VERSION_TWEAK@
+#define @ROOT_NAME@_VERSION "@PROJECT_VERSION@"
+
+namespace @ROOT_NAME@ {
+	
+	const char * version();
+
+}

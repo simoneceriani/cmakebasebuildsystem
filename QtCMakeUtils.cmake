@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.17)
+include_guard(GLOBAL)
+
+function(printQtPluginsList)
+	find_package(Qt5 COMPONENTS Network Sql Gui Widgets REQUIRED CONFIG)
+	foreach(baseLib "Network" "Sql" "Gui" "Widgets")
+	message(${baseLib})
+	foreach(plugin ${Qt5${baseLib}_PLUGINS})
+	  get_target_property(_loc ${plugin} LOCATION)
+	  message("Plugin ${plugin} is at location ${_loc}")
+	endforeach()
+	endforeach()
+endfunction()
