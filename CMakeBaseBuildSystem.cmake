@@ -444,6 +444,8 @@ function(prepareVersionFile ROOT_NAME)
 			$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 	)
 
+  # respect debug and release version
+  set_target_properties(${ROOT_NAME}Version PROPERTIES DEBUG_POSTFIX "d")
 
 	installTarget(${ROOT_NAME}Version ${ROOT_NAME} ${ROOT_NAME})
 		

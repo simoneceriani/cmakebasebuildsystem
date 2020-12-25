@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.17)
-
-# tell cmake where is CMakeBaseBuildSystem folder
-set(<<MAIN_PROJECT_NAME>>_CMAKEBASEBUILDSYSTEM_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmakebasebuildsystem" CACHE PATH "path to the CMakeBaseBuildSystem folder")
-list(APPEND CMAKE_MODULE_PATH "${<<MAIN_PROJECT_NAME>>_CMAKEBASEBUILDSYSTEM_PATH}")
-
-# OK, now a normal project can start
 project(<<MAIN_PROJECT_NAME>> VERSION 1.0.0 LANGUAGES CXX)
+
+# tell cmake where is CMakeBaseBuildSystem folder, if I am not included by another project
+if(<<MAIN_PROJECT_NAME>> STREQUAL ${CMAKE_PROJECT_NAME})
+  set(<<MAIN_PROJECT_NAME>>_CMAKEBASEBUILDSYSTEM_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmakebasebuildsystem" CACHE PATH "path to the CMakeBaseBuildSystem folder")
+  list(APPEND CMAKE_MODULE_PATH "${<<MAIN_PROJECT_NAME>>_CMAKEBASEBUILDSYSTEM_PATH}")
+endif()
+
 
 # add the CMakeBaseBuildSystem modules, just a bunch of includes here
 include(winDllRecursiveAnalysis)
@@ -13,7 +14,9 @@ include(utils)
 include(CMakeBaseBuildSystem)
 include(gitTracer)
 # add CMakeBaseBuildSystem in source dir, allow to track version!
-configureGitCMakeFile(${<<MAIN_PROJECT_NAME>>_CMAKEBASEBUILDSYSTEM_PATH} CMakeBaseBuildSystem ${CMAKE_CURRENT_SOURCE_DIR})
+if(<<MAIN_PROJECT_NAME>>_CMAKEBASEBUILDSYSTEM_PATH)
+  configureGitCMakeFile(${<<MAIN_PROJECT_NAME>>_CMAKEBASEBUILDSYSTEM_PATH} CMakeBaseBuildSystem ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
 
 if (WIN32)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -73,6 +76,14 @@ endif()
 # NOTE: this will prepare and install a target <<MAIN_PROJECT_NAME>>Version (STATIC LIBRARY) 
 prepareVersionFile(<<MAIN_PROJECT_NAME>>)
 # alternative, use prepareVersionFileInterface(<<MAIN_PROJECT_NAME>>) to create <<MAIN_PROJECT_NAME>>Version as INTERFACE LIBRARY
+
+## add libs compiled inside with option
+## remember to add an if(NOT <<MAIN_PROJECT_NAME>>_BUILD_<<LIB_NAME>>) in CMakeLists.txt of subprojects requiring this lib 
+# OPTION(<<MAIN_PROJECT_NAME>>_BUILD_<<LIB_NAME>> "Build <<LIB_NAME>> here, if ON you need to clone <<LIB_NAME>> in <<LIB_NAME>> folder" OFF)
+# if(<<MAIN_PROJECT_NAME>>_BUILD_<<LIB_NAME>>)
+#	add_subdirectory(<<LIB_NAME>>)
+#	configureGitCMakeFile(${CMAKE_CURRENT_SOURCE_DIR}/<<LIB_NAME>> <<LIB_NAME>> ${CMAKE_CURRENT_SOURCE_DIR})
+#endif()
 
 # add the libs (please respect the structure)
 # add_subdirectory(<<MAIN_PROJECT_NAME>>/<<DIRNAME>>)
