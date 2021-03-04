@@ -41,6 +41,10 @@ MESSAGE(STATUS "Packages search paths:")
 MESSAGE(STATUS "ENV{CMAKE_PREFIX_PATH} = $ENV{CMAKE_PREFIX_PATH}")
 MESSAGE(STATUS "CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
 
+# allow to use by default RELEASE lib when RELWITHDEBINFO is compiled
+# set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE)
+# note, if need at target level, use set_target_properties(<<target>> PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE)
+
 # enable cmake testing
 enable_testing()
 
