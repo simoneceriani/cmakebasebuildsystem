@@ -72,6 +72,27 @@ if(WIN32)
       
       printCMakeUtilsDebug("[winDllRecursiveAnalysis::addDLLToTarget] add ${dllTarget} dll libraries ${BIN_F_IMP_DEBUG} and ${BIN_F_IMP_RELEASE} to global list and as a dependancy  of ${base_target} ")			
       
+      # GENERIC
+      if(NOT DEBRELFOUND)
+        get_target_property(BIN_F_IMP_GENERIC ${dllTarget} IMPORTED_LOCATION) #get dll location
+        if(BIN_F_IMP_GENERIC)
+          # check file exist
+          if(EXISTS ${BIN_F_IMP_GENERIC})
+            set(DEBRELFOUND True)
+          
+            addToGlobalPropertyUnique(DLL_RELEASE_LIST ${BIN_F_IMP_GENERIC})
+            addToTargetPropertyUnique(${base_target} DLL_RELEASE_LIST ${BIN_F_IMP_GENERIC})
+            addToGlobalPropertyUnique(DLL_DEBUG_LIST ${BIN_F_IMP_GENERIC})
+            addToTargetPropertyUnique(${base_target} DLL_DEBUG_LIST ${BIN_F_IMP_GENERIC})
+          else()
+            printCMakeUtilsDebug("[winDllRecursiveAnalysis::addDLLToTarget] dll ${dllTarget} depends on ${BIN_F_IMP_GENERIC} but the file does not exists, skip dependancy")
+          endif()
+        else()
+          printCMakeUtilsDebug("[winDllRecursiveAnalysis::addDLLToTarget] dll ${dllTarget} does not have IMPORTED_LOCATION")
+        endif()
+      endif()
+      
+      
       if(NOT DEBRELFOUND)
         MESSAGE(WARNING "[winDllRecursiveAnalysis::addDLLToTarget] add ${dllTarget} does not found neither DEBUG or RELEASE version, set IMPORTED_LOCATION_RELEASE and/or IMPORTED_LOCATION_DEBUG variables for ${dllTarget} target")
       endif()
@@ -123,17 +144,20 @@ if(WIN32)
 
 			# get target type
 			get_target_property(target_type ${target} TYPE)
-			printCMakeUtilsDebug("[winDllRecursiveAnalysis::analyzeTargetDependencies] process target ${target}, type is ${target_type}, is imported ${target_isImported}")
-
 			# manage this target, it is a dll to be copied?
 			get_target_property(target_isImported ${target} IMPORTED)
+
+			printCMakeUtilsDebug("[winDllRecursiveAnalysis::analyzeTargetDependencies] process target ${target}, type is ${target_type}, is imported ${target_isImported}")
+
 			if(target_isImported AND ((${target_type} STREQUAL "MODULE_LIBRARY") OR (${target_type} STREQUAL "SHARED_LIBRARY")))
 				
+        set(DEBUG_RELEASE_FOUND False)
 				# DEBUG
 				get_target_property(BIN_F_IMP_DEBUG ${target} IMPORTED_LOCATION_DEBUG) #get dll location
 				if(BIN_F_IMP_DEBUG)
 					# check file exist
 					if(EXISTS ${BIN_F_IMP_DEBUG})
+            set(DEBUG_RELEASE_FOUND True)
 						addToGlobalPropertyUnique(DLL_DEBUG_LIST ${BIN_F_IMP_DEBUG})
 						addToTargetPropertyUnique(${base_target} DLL_DEBUG_LIST ${BIN_F_IMP_DEBUG})
 					else()
@@ -148,6 +172,7 @@ if(WIN32)
 				if(BIN_F_IMP_RELEASE)
 					# check file exist
 					if(EXISTS ${BIN_F_IMP_RELEASE})
+            set(DEBUG_RELEASE_FOUND True)
 						addToGlobalPropertyUnique(DLL_RELEASE_LIST ${BIN_F_IMP_RELEASE})
 						addToTargetPropertyUnique(${base_target} DLL_RELEASE_LIST ${BIN_F_IMP_RELEASE})
 					else()
@@ -156,6 +181,24 @@ if(WIN32)
 				else()
 					printCMakeUtilsDebug("[winDllRecursiveAnalysis::analyzeTargetDependencies] dll ${target} does not have IMPORTED_LOCATION_RELEASE")
 				endif()
+        
+        # GENERIC
+        if(NOT DEBUG_RELEASE_FOUND)
+          get_target_property(BIN_F_IMP_GENERIC ${target} IMPORTED_LOCATION) #get dll location
+          if(BIN_F_IMP_GENERIC)
+            # check file exist
+            if(EXISTS ${BIN_F_IMP_GENERIC})
+              addToGlobalPropertyUnique(DLL_RELEASE_LIST ${BIN_F_IMP_GENERIC})
+              addToTargetPropertyUnique(${base_target} DLL_RELEASE_LIST ${BIN_F_IMP_GENERIC})
+              addToGlobalPropertyUnique(DLL_DEBUG_LIST ${BIN_F_IMP_GENERIC})
+              addToTargetPropertyUnique(${base_target} DLL_DEBUG_LIST ${BIN_F_IMP_GENERIC})
+            else()
+              printCMakeUtilsDebug("[winDllRecursiveAnalysis::analyzeTargetDependencies] dll ${target} depends on ${BIN_F_IMP_GENERIC} but the file does not exists, skip dependancy")
+            endif()
+          else()
+            printCMakeUtilsDebug("[winDllRecursiveAnalysis::analyzeTargetDependencies] dll ${target} does not have IMPORTED_LOCATION")
+          endif()
+        endif()
 				
 				printCMakeUtilsDebug("[winDllRecursiveAnalysis::analyzeTargetDependencies] add ${target} dll libraries ${BIN_F_IMP_DEBUG} and ${BIN_F_IMP_RELEASE} to global and target list")			
 			endif()
