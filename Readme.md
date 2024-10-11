@@ -7,7 +7,25 @@ CMakeBaseBuildSystem is compatible both with Linux and Windows
 ## Requirements
 
 ### CMake
-The (minium) required version for CMake is **3.17.0**.
+The (minium) required version for CMake is **3.17.0**. But, if available please install a newer version!
+
+#### How to install on Windows
+You can download installer from https://cmake.org/download. Suggested version is cmake-VERSION-win64-x64.msi and install normally
+
+#### Linux / Ubuntu
+
+Normally repositories (e.g., Ubuntu 18.04 offers CMake ) does not offer modern cmake version. If you already have CMake installed, uninstall it using the package manager (e.g., `sudo apt remove cmake` in Ubuntu/Debian).
+Ubuntu (since 16.04) offers a alternative package manager system, `snap`, to install CMake use
+
+```sudo snap install cmake --classic```
+
+More info here https://snapcraft.io/install/cmake/ubuntu
+
+Otherwise CMake can be downloaded from the official website (https://cmake.org/) and compiled from sources
+
+### Why should I install the last version of CMake? 
+Even known as "I already have CMake 3.X, are you really requiring the very last functionality of CMake?". No, probably no, but CMake developers encourage to use the very last version of this tool (see e.g., https://cliutils.gitlab.io/modern-cmake section *Why use a Modern CMake?*) and its installation is simple, probably it would have take less than reading this answer.... So please go back to section *How To install*.
+
 
 ## How to organize your project
 We recommend to use `CMakeBaseBuildSystem ` in a folder structure similar to the following
